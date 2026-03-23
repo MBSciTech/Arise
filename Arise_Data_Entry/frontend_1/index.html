@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Arise - Mood Log Entry</title>
+	<style>
+		@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
+
+		:root {
+			--bg: #eef5ea;
+			--panel: #fdfdf5;
+			--ink: #1a2a1f;
+			--muted: #4f6656;
+			--accent: #2d7b55;
+			--accent-strong: #19553a;
+			--border: #c9d8cb;
+			--danger: #8f2d2d;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			min-height: 100vh;
+			font-family: "Space Grotesk", "Trebuchet MS", sans-serif;
+			color: var(--ink);
+			background:
+				radial-gradient(circle at 80% 15%, rgba(45, 123, 85, 0.18), transparent 30%),
+				radial-gradient(circle at 18% 70%, rgba(255, 196, 91, 0.18), transparent 35%),
+				var(--bg);
+			display: grid;
+			place-items: center;
+			padding: 1.5rem;
+		}
+
+		.shell {
+			width: min(960px, 100%);
+			display: grid;
+			gap: 1.2rem;
+			animation: enter 500ms ease;
+		}
+
+		.card {
+			background: var(--panel);
+			border: 1px solid var(--border);
+			border-radius: 16px;
+			padding: 1.25rem;
+			box-shadow: 0 14px 32px rgba(26, 42, 31, 0.08);
+		}
+
+		h1 {
+			margin: 0 0 0.35rem;
+			font-size: clamp(1.5rem, 2vw + 0.85rem, 2.2rem);
+			line-height: 1.12;
+			letter-spacing: -0.03em;
+		}
+
+		p {
+			margin: 0;
+			color: var(--muted);
+		}
+
+		form {
+			margin-top: 1rem;
+			display: grid;
+			gap: 0.9rem;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		.field {
+			display: grid;
+			gap: 0.35rem;
+		}
+
+		.field.wide {
+			grid-column: 1 / -1;
+		}
+
+		label {
+			font-weight: 600;
+			font-size: 0.9rem;
+		}
+
+		input,
+		select,
+		button {
+			font: inherit;
+			border-radius: 10px;
+			border: 1px solid var(--border);
+			padding: 0.65rem 0.7rem;
+			background: #ffffff;
+			color: var(--ink);
+		}
+
+		input:focus,
+		select:focus {
+			outline: 2px solid rgba(45, 123, 85, 0.35);
+			border-color: var(--accent);
+		}
+
+		button {
+			cursor: pointer;
+			border: none;
+			background: linear-gradient(140deg, var(--accent), #5e9e52);
+			color: #fff;
+			font-weight: 700;
+			transition: transform 180ms ease, box-shadow 180ms ease;
+		}
+
+		button:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 8px 18px rgba(45, 123, 85, 0.22);
+		}
+
+		.status {
+			min-height: 1.3rem;
+			font-size: 0.95rem;
+			margin-top: 0.75rem;
+		}
+
+		.status.success {
+			color: var(--accent-strong);
+		}
+
+		.status.error {
+			color: var(--danger);
+		}
+
+		.logs {
+			overflow-x: auto;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 0.88rem;
+		}
+
+		th,
+		td {
+			border-bottom: 1px solid var(--border);
+			padding: 0.55rem;
+			text-align: left;
+			white-space: nowrap;
+		}
+
+		th {
+			color: var(--muted);
+			font-weight: 600;
+			background: #f6fbf4;
+		}
+
+		@media (max-width: 760px) {
+			form {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		@keyframes enter {
+			from {
+				opacity: 0;
+				transform: translateY(8px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="shell">
+		<section class="card">
+			<h1>Daily Log Entry</h1>
+			<p>Submit your daily metrics. Each submission is appended to <strong>data3.csv</strong>.</p>
+
+			<form id="logForm">
+				<div class="field">
+					<label for="sleep_hours">Sleep Hours (0-24)</label>
+					<input id="sleep_hours" name="sleep_hours" type="number" step="0.1" min="0" max="24" required />
+				</div>
+
+				<div class="field">
+					<label for="activity_minutes">Activity Minutes (0-1440)</label>
+					<input id="activity_minutes" name="activity_minutes" type="number" min="0" max="1440" required />
+				</div>
+
+				<div class="field">
+					<label for="energy_level">Energy Level (1-5)</label>
+					<select id="energy_level" name="energy_level" required>
+						<option value="">Select</option>
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5</option>
+					</select>
+				</div>
+
+				<div class="field">
+					<label for="stress_level">Stress Level (1-5)</label>
+					<select id="stress_level" name="stress_level" required>
+						<option value="">Select</option>
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5</option>
+					</select>
+				</div>
+
+				<div class="field">
+					<label for="task_completion">Task Completion % (0-100)</label>
+					<input id="task_completion" name="task_completion" type="number" min="0" max="100" required />
+				</div>
+
+				<div class="field">
+					<label for="screen_time">Screen Time in Hours (0-24)</label>
+					<input id="screen_time" name="screen_time" type="number" step="0.1" min="0" max="24" required />
+				</div>
+
+				<div class="field">
+					<label for="previous_day_mood">Previous Day Mood (1-5)</label>
+					<select id="previous_day_mood" name="previous_day_mood" required>
+						<option value="">Select</option>
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5</option>
+					</select>
+				</div>
+
+				<div class="field">
+					<label for="mood_today">Mood Today (1-5)</label>
+					<select id="mood_today" name="mood_today" required>
+						<option value="">Select</option>
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5</option>
+					</select>
+				</div>
+
+				<div class="field wide">
+					<button type="submit">Add Log</button>
+					<div class="status" id="status"></div>
+				</div>
+			</form>
+		</section>
+
+		<section class="card logs">
+			<h1 style="font-size: 1.25rem;">Latest Entries</h1>
+			<p>Shows last 10 rows from the backend.</p>
+			<table>
+				<thead>
+					<tr>
+						<th>Sleep</th>
+						<th>Activity</th>
+						<th>Energy</th>
+						<th>Stress</th>
+						<th>Tasks %</th>
+						<th>Screen</th>
+						<th>Prev Mood</th>
+						<th>Today Mood</th>
+					</tr>
+				</thead>
+				<tbody id="logsBody"></tbody>
+			</table>
+		</section>
+	</main>
+
+	<script>
+		const API_BASE = "http://127.0.0.1:5000";
+		const form = document.getElementById("logForm");
+		const statusEl = document.getElementById("status");
+		const logsBody = document.getElementById("logsBody");
+
+		function showStatus(message, type) {
+			statusEl.textContent = message;
+			statusEl.className = "status " + type;
+		}
+
+		function renderRows(rows) {
+			const recentRows = rows.slice(-10).reverse();
+
+			logsBody.innerHTML = recentRows
+				.map(
+					(row) => `
+						<tr>
+							<td>${row.sleep_hours}</td>
+							<td>${row.activity_minutes}</td>
+							<td>${row.energy_level}</td>
+							<td>${row.stress_level}</td>
+							<td>${row.task_completion}</td>
+							<td>${row.screen_time}</td>
+							<td>${row.previous_day_mood}</td>
+							<td>${row.mood_today}</td>
+						</tr>
+					`
+				)
+				.join("");
+		}
+
+		async function refreshLogs() {
+			try {
+				const response = await fetch(`${API_BASE}/api/logs`);
+				const data = await response.json();
+
+				if (!response.ok) {
+					throw new Error(data.error || "Unable to load logs");
+				}
+
+				renderRows(data.logs || []);
+			} catch (error) {
+				showStatus(error.message, "error");
+			}
+		}
+
+		form.addEventListener("submit", async (event) => {
+			event.preventDefault();
+			showStatus("Submitting...", "success");
+
+			const payload = Object.fromEntries(new FormData(form).entries());
+
+			try {
+				const response = await fetch(`${API_BASE}/api/logs`, {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(payload),
+				});
+
+				const data = await response.json();
+
+				if (!response.ok || !data.success) {
+					throw new Error(data.error || "Failed to add log");
+				}
+
+				form.reset();
+				showStatus(data.message, "success");
+				await refreshLogs();
+			} catch (error) {
+				showStatus(error.message, "error");
+			}
+		});
+
+		refreshLogs();
+	</script>
+</body>
+</html>
