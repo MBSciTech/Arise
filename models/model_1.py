@@ -45,20 +45,71 @@ for name, coef in zip(feature_names, model.coef_):
     print(f"{name}: {coef}")
 
 # STEP 10: Predict for new day (IMPORTANT: use DataFrame)
-new_day = pd.DataFrame([{
-    "sleep_hours": 7,
-    "activity_minutes": 50,
-    "energy_level": 4,
-    "stress_level": 2,
-    "task_completion": 75,
-    "screen_time": 3,
-    "previous_day_mood": 4
-}])
+def predict_mood():
+    data_dict = {}
 
-# Scale new input
-new_day_scaled = scaler.transform(new_day)
+    print("\nEnter your daily details:\n")
+    data_arr = ["sleep_hours","activity_minutes","energy_level","stress_level","task_completion","screen_time","previous_day_mood"]
 
-# Predict
-predicted_mood = model.predict(new_day_scaled)
+    # Input with validation
+    for feature in data_arr:
+        while True:
+            try:
+                value = float(input(f"Enter {feature}: "))
 
-print("\nPredicted Mood:", predicted_mood[0])
+                # Basic validation rules
+                if feature == "sleep_hours" and not (0 <= value <= 12):
+                    raise ValueError("Sleep should be between 0-12 hours")
+
+                if feature in ["energy_level", "stress_level", "previous_day_mood"] and not (1 <= value <= 5):
+                    raise ValueError("Value should be between 1-5")
+
+                if feature == "activity_minutes" and value < 0:
+                    raise ValueError("Activity can't be negative")
+
+                if feature == "task_completion" and not (0 <= value <= 100):
+                    raise ValueError("Task completion should be 0-100")
+
+                if feature == "screen_time" and value < 0:
+                    raise ValueError("Screen time can't be negative")
+
+                data_dict[feature] = value
+                break
+
+            except ValueError as e:
+                print("Invalid input:", e)
+
+    # Convert to DataFrame
+    new_day = pd.DataFrame([data_dict])
+
+    # Ensure correct column order
+    new_day = new_day[X.columns]
+
+    # Scale input
+    new_day_scaled = scaler.transform(new_day)
+
+    # Predict
+    predicted_mood = model.predict(new_day_scaled)[0]
+
+    # Round mood
+    rounded_mood = round(predicted_mood)
+
+    # Mood interpretation
+    mood_map = {
+        1: "Very Bad 😞",
+        2: "Low 😕",
+        3: "Neutral 😐",
+        4: "Good 🙂",
+        5: "Excellent 😄"
+    }
+
+    print("\n📊 Input Data:")
+    print(new_day)
+
+    print("\n🎯 Predicted Mood Score:", round(predicted_mood, 2))
+    print("🧠 Interpreted Mood:", mood_map.get(rounded_mood, "Unknown"))
+
+
+
+
+predict_mood()
