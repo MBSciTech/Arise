@@ -1,31 +1,64 @@
 # Arise
-personal development app
+Personal development chat app with wellness logging and local AI guidance.
 
-## Data Entry App (Frontend + Backend)
+## Quick Start
 
-This project now includes:
+### Prerequisites
+- Python 3.10+
+- ~2GB free disk (for model download on first run)
 
-- Frontend form: `Arise_Data_Entry/frontend_1/index.html`
-- Backend API: `Arise_Data_Entry/backend/app.py`
-- Target CSV file: `dataset/data3.csv`
-
-### 1) Start Backend
+### 1) Install Dependencies
 
 ```powershell
-cd Arise_Data_Entry/backend
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+cd C:\Users\MaharshiJB\Downloads\Projects\Arise\Arise
+python -m venv venv
+.\venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-python app.py
 ```
 
-The backend runs at `http://127.0.0.1:5000`.
+### 2) Run the App
 
-### 2) Open Frontend
+```powershell
+streamlit run app.py
+```
 
-Open `Arise_Data_Entry/frontend_1/index.html` in your browser.
+The app opens at `http://localhost:8501`.
 
-### 3) Submit Logs
+## Features
 
-Fill the form and click **Add Log**.
-Each successful submission is appended as a new row in `dataset/data3.csv`.
+### Chat Interface (Main)
+- **Local AI Model**: Uses Google Flan-T5-Small (100M params), runs on CPU
+- **Mood-Aware**: Context from your daily wellness logs injected into responses
+- **Personalized**: Learns from your sleep, energy, stress, and mood patterns
+- **No Cloud Dependency**: Everything runs locally on your machine
+
+### Wellness Logger (Sidebar)
+- Log daily metrics: sleep hours, energy level, stress level, mood rating
+- Data persists to `data/user_data.csv`
+- Automatically used to personalize chat responses
+
+### Data Entry Backend (Optional)
+- Separate REST API for bulk logging if needed
+- Located in `Arise_Data_Entry/backend/`
+- Routes to `dataset/data3.csv`
+
+Arise/
+│
+├── app.py                 # Main Streamlit entrypoint
+├── requirements.txt       # All dependencies
+├── README.md
+│
+├── data/
+│   ├── user_data.csv      # Stores user inputs
+│   └── model_data.pkl     # Optional: saved ML model
+│
+├── models/
+│   ├── llm_model/         # Hugging Face small LLM or GPT-J checkpoint
+│   └── ml_models/         # Any trained scikit-learn models
+│
+├── utils/
+│   ├── data_handler.py    # Load/save CSV, preprocess
+│   ├── ml_predictor.py    # Train & predict moods/emotions
+│   └── llm_chat.py        # Chat logic + LLM integration
+│
+└── assets/                # Images, icons, CSS for Streamlit
